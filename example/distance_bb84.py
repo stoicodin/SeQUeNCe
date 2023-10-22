@@ -10,8 +10,8 @@ from sequence.qkd.BB84 import pair_bb84_protocols
 from sequence.topology.node import QKDNode
 
 if __name__ == "__main__":
-    NUM_EXPERIMENTS = 11
-    runtime = 6e12
+    NUM_EXPERIMENTS = 40
+    runtime = 1e12
 
     # open file to store experiment results
     # Path("results/sensitivity").mkdir(parents=True, exist_ok=True)
@@ -24,20 +24,20 @@ if __name__ == "__main__":
     latency_list = []
 
     for i in range(NUM_EXPERIMENTS):
-        distance = max(1000, 10000 * int(i))
+        distance = max(500, 500 * int(i))
 
         tl = Timeline(runtime)
         tl.show_progress = True
 
-        qc0 = QuantumChannel("qc0", tl, distance=distance, polarization_fidelity=0.97, attenuation=0.0002)
-        qc1 = QuantumChannel("qc1", tl, distance=distance, polarization_fidelity=0.97, attenuation=0.0002)
+        qc0 = QuantumChannel("qc0", tl, distance=distance, polarization_fidelity=0.97, attenuation=0.0007)
+        qc1 = QuantumChannel("qc1", tl, distance=distance, polarization_fidelity=0.97, attenuation=0.0007)
         cc0 = ClassicalChannel("cc0", tl, distance=distance)
         cc1 = ClassicalChannel("cc1", tl, distance=distance)
         cc0.delay += 10e9  # 10 ms
         cc1.delay += 10e9
 
         # Alice
-        ls_params = {"frequency": 80e6, "mean_photon_num": 0.1}
+        ls_params = {"frequency": 20e6, "wavelength":810, "radius": 20.08, "height":1.8, "zenith": 0.85}   #650 ps average pulse width 
         alice = QKDNode("alice", tl, stack_size=1)
         alice.set_seed(0)
 
@@ -45,8 +45,8 @@ if __name__ == "__main__":
             alice.update_lightsource_params(name, param)
 
         # Bob
-        detector_params = [{"efficiency": 0.8, "dark_count": 10, "time_resolution": 10, "count_rate": 50e6},
-                           {"efficiency": 0.8, "dark_count": 10, "time_resolution": 10, "count_rate": 50e6}]
+        detector_params = [{"efficiency": 0.65, "dark_count": 1000, "time_resolution": 0.022, "count_rate": 10e6},
+                           {"efficiency": 0.65, "dark_count": 1000, "time_resolution": 0.022, "count_rate": 10e6}]
         bob = QKDNode("bob", tl, stack_size=1)
         bob.set_seed(1)
 
@@ -81,4 +81,4 @@ if __name__ == "__main__":
 
     log = {'Distance': dist_list, "Throughput": tp_list, 'Error_rate': error_rate_list, 'Latency': latency_list}
     df = pd.DataFrame(log)
-    df.to_csv('distance_bb84.csv')
+    df.to_csv('distance_bb84_outsidemetropolitan.csv')
