@@ -29,15 +29,15 @@ if __name__ == "__main__":
         tl = Timeline(runtime)
         tl.show_progress = True
 
-        qc0 = QuantumChannel("qc0", tl, distance=distance, polarization_fidelity=0.97, attenuation=0.0007)
-        qc1 = QuantumChannel("qc1", tl, distance=distance, polarization_fidelity=0.97, attenuation=0.0007)
+        qc0 = QuantumChannel("qc0", tl, distance=distance, polarization_fidelity=0.97, attenuation=0.0007,light_speed=3e-4,T_zenith=0.91)
+        qc1 = QuantumChannel("qc1", tl, distance=distance, polarization_fidelity=0.97, attenuation=0.0007,light_speed=3e-4,T_zenith=0.91)
         cc0 = ClassicalChannel("cc0", tl, distance=distance)
         cc1 = ClassicalChannel("cc1", tl, distance=distance)
         cc0.delay += 10e9  # 10 ms
         cc1.delay += 10e9
 
         # Alice
-        ls_params = {"frequency": 20e6, "wavelength":810, "radius": 20.08, "height":1.8, "zenith": 0.85}   #650 ps average pulse width 
+        ls_params = {"frequency": 20e6, "wavelength":810, "radius": 20.08, "height":1.8, "T_zenith": 0.91}   #650 ps average pulse width 
         alice = QKDNode("alice", tl, stack_size=1)
         alice.set_seed(0)
 
@@ -81,4 +81,4 @@ if __name__ == "__main__":
 
     log = {'Distance': dist_list, "Throughput": tp_list, 'Error_rate': error_rate_list, 'Latency': latency_list}
     df = pd.DataFrame(log)
-    df.to_csv('distance_bb84_outsidemetropolitan.csv')
+    df.to_csv('distance_bb84_metropolitan_update1.csv')
